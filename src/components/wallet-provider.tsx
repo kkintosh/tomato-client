@@ -1,9 +1,10 @@
-import { AptosWalletAdapterProvider } from "@aptos-labs/wallet-adapter-react";
-import { PropsWithChildren } from "react";
-import { Network } from "@aptos-labs/ts-sdk";
+import type { PropsWithChildren } from "react";
 
-import { PetraWallet } from "petra-plugin-wallet-adapter";
+import { Network } from "@aptos-labs/ts-sdk";
+import { AptosWalletAdapterProvider } from "@aptos-labs/wallet-adapter-react";
 import { OKXWallet } from "@okwallet/aptos-wallet-adapter";
+import { PetraWallet } from "petra-plugin-wallet-adapter";
+
 import { useToast } from "@/hooks/use-toast";
 
 export const WalletProvider = ({ children }: PropsWithChildren) => {

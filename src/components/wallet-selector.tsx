@@ -1,45 +1,31 @@
+import { useCallback, useState } from "react";
+
 import {
-  APTOS_CONNECT_ACCOUNT_URL,
   AboutAptosConnect,
   AboutAptosConnectEducationScreen,
   AnyAptosWallet,
+  APTOS_CONNECT_ACCOUNT_URL,
   AptosPrivacyPolicy,
-  WalletItem,
-  WalletSortingOptions,
   groupAndSortWallets,
   isAptosConnectWallet,
   isInstallRequired,
   truncateAddress,
   useWallet,
+  WalletItem,
+  WalletSortingOptions,
 } from "@aptos-labs/wallet-adapter-react";
-import {
-  ArrowLeft,
-  ArrowRight,
-  ChevronDown,
-  Copy,
-  LogOut,
-  User,
-} from "lucide-react";
-import { useCallback, useState } from "react";
-import { Button } from "./ui/button";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "./ui/collapsible";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog";
+import { ArrowLeft, ArrowRight, ChevronDown, Copy, LogOut, User } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
+
 import { useToast } from "../hooks/use-toast";
 
 export function WalletSelector(walletSortingOptions: WalletSortingOptions) {
@@ -69,9 +55,7 @@ export function WalletSelector(walletSortingOptions: WalletSortingOptions) {
   return connected ? (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button>
-          {account?.ansName || truncateAddress(account?.address) || "Unknown"}
-        </Button>
+        <Button>{account?.ansName || truncateAddress(account?.address) || "Unknown"}</Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onSelect={copyAddress} className="gap-2">
@@ -79,12 +63,7 @@ export function WalletSelector(walletSortingOptions: WalletSortingOptions) {
         </DropdownMenuItem>
         {wallet && isAptosConnectWallet(wallet) && (
           <DropdownMenuItem asChild>
-            <a
-              href={APTOS_CONNECT_ACCOUNT_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex gap-2"
-            >
+            <a href={APTOS_CONNECT_ACCOUNT_URL} target="_blank" rel="noopener noreferrer" className="flex gap-2">
               <User className="h-4 w-4" /> Account
             </a>
           </DropdownMenuItem>
@@ -108,14 +87,13 @@ interface ConnectWalletDialogProps extends WalletSortingOptions {
   close: () => void;
 }
 
-function ConnectWalletDialog({
-  close,
-  ...walletSortingOptions
-}: ConnectWalletDialogProps) {
+function ConnectWalletDialog({ close, ...walletSortingOptions }: ConnectWalletDialogProps) {
   const { wallets = [] } = useWallet();
 
-  const { aptosConnectWallets, availableWallets, installableWallets } =
-    groupAndSortWallets(wallets, walletSortingOptions);
+  const { aptosConnectWallets, availableWallets, installableWallets } = groupAndSortWallets(
+    wallets,
+    walletSortingOptions
+  );
 
   const hasAptosConnectWallets = !!aptosConnectWallets.length;
 
@@ -138,15 +116,11 @@ function ConnectWalletDialog({
         {hasAptosConnectWallets && (
           <div className="flex flex-col gap-2 pt-3">
             {aptosConnectWallets.map((wallet) => (
-              <AptosConnectWalletRow
-                key={wallet.name}
-                wallet={wallet}
-                onConnect={close}
-              />
+              <AptosConnectWalletRow key={wallet.name} wallet={wallet} onConnect={close} />
             ))}
-            <p className="flex gap-1 justify-center items-center text-muted-foreground text-sm">
+            <p className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
               Learn more about{" "}
-              <AboutAptosConnect.Trigger className="flex gap-1 py-3 items-center text-foreground">
+              <AboutAptosConnect.Trigger className="flex items-center gap-1 py-3 text-foreground">
                 Aptos Connect <ArrowRight size={16} />
               </AboutAptosConnect.Trigger>
             </p>
@@ -156,7 +130,7 @@ function ConnectWalletDialog({
                 <AptosPrivacyPolicy.Link className="text-muted-foreground underline underline-offset-4" />
                 <span className="text-muted-foreground">.</span>
               </p>
-              <AptosPrivacyPolicy.PoweredBy className="flex gap-1.5 items-center text-xs leading-5 text-muted-foreground" />
+              <AptosPrivacyPolicy.PoweredBy className="flex items-center gap-1.5 text-xs leading-5 text-muted-foreground" />
             </AptosPrivacyPolicy>
             <div className="flex items-center gap-3 pt-4 text-muted-foreground">
               <div className="h-px w-full bg-secondary" />
@@ -179,11 +153,7 @@ function ConnectWalletDialog({
               </CollapsibleTrigger>
               <CollapsibleContent className="flex flex-col gap-3">
                 {installableWallets.map((wallet) => (
-                  <WalletRow
-                    key={wallet.name}
-                    wallet={wallet}
-                    onConnect={close}
-                  />
+                  <WalletRow key={wallet.name} wallet={wallet} onConnect={close} />
                 ))}
               </CollapsibleContent>
             </Collapsible>
@@ -204,7 +174,7 @@ function WalletRow({ wallet, onConnect }: WalletRowProps) {
     <WalletItem
       wallet={wallet}
       onConnect={onConnect}
-      className="flex items-center justify-between px-4 py-3 gap-4 border rounded-md"
+      className="flex items-center justify-between gap-4 rounded-md border px-4 py-3"
     >
       <div className="flex items-center gap-4">
         <WalletItem.Icon className="h-6 w-6" />
@@ -243,41 +213,29 @@ function renderEducationScreen(screen: AboutAptosConnectEducationScreen) {
         <Button variant="ghost" size="icon" onClick={screen.cancel}>
           <ArrowLeft />
         </Button>
-        <DialogTitle className="leading-snug text-base text-center">
-          About Aptos Connect
-        </DialogTitle>
+        <DialogTitle className="text-center text-base leading-snug">About Aptos Connect</DialogTitle>
       </DialogHeader>
 
-      <div className="flex h-[162px] pb-3 items-end justify-center">
+      <div className="flex h-[162px] items-end justify-center pb-3">
         <screen.Graphic />
       </div>
-      <div className="flex flex-col gap-2 text-center pb-4">
+      <div className="flex flex-col gap-2 pb-4 text-center">
         <screen.Title className="text-xl" />
-        <screen.Description className="text-sm text-muted-foreground [&>a]:underline [&>a]:underline-offset-4 [&>a]:text-foreground" />
+        <screen.Description className="text-sm text-muted-foreground [&>a]:text-foreground [&>a]:underline [&>a]:underline-offset-4" />
       </div>
 
       <div className="grid grid-cols-3 items-center">
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={screen.back}
-          className="justify-self-start"
-        >
+        <Button size="sm" variant="ghost" onClick={screen.back} className="justify-self-start">
           Back
         </Button>
         <div className="flex items-center gap-2 place-self-center">
           {screen.screenIndicators.map((ScreenIndicator, i) => (
             <ScreenIndicator key={i} className="py-4">
-              <div className="h-0.5 w-6 transition-colors bg-muted [[data-active]>&]:bg-foreground" />
+              <div className="h-0.5 w-6 bg-muted transition-colors [[data-active]>&]:bg-foreground" />
             </ScreenIndicator>
           ))}
         </div>
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={screen.next}
-          className="gap-2 justify-self-end"
-        >
+        <Button size="sm" variant="ghost" onClick={screen.next} className="gap-2 justify-self-end">
           {screen.screenIndex === screen.totalScreens - 1 ? "Finish" : "Next"}
           <ArrowRight size={16} />
         </Button>

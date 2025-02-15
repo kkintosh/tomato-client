@@ -1,0 +1,12 @@
+{
+  "printWidth": 120,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": false,
+  "trailingComma": "es5",
+  "bracketSpacing": true,
+  "plugins": ["prettier-plugin-tailwindcss", "@ianvs/prettier-plugin-sort-imports"],
+  "importOrder": ["^react", "", "<BUILTIN_MODULES>", "", "<THIRD_PARTY_MODULES>", "", "^@/(.*)$", "", "^[./]"],
+  "importOrderTypeScriptVersion": "5.0.0"
+}
