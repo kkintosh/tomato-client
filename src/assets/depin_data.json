@@ -1,0 +1,14 @@
+{
+  "device_id": "foo_device_001",
+  "timestamp": "2024-08-29T12:34:56Z",
+  "data": {
+    "temperature": 22.5,
+    "humidity": 60,
+    "battery_level": 85,
+    "location": {
+      "latitude": 37.7749,
+      "longitude": -122.4194
+    }
+  },
+  "signature": "a4f8a2e8e7c4d2a7c3e1f9b6d8e2f1a0c5b7e6a3c4d1f7b8e2a6c1d3e7f8b9c2"
+}
