@@ -7,3 +7,11 @@ export function isEmpty(obj: any) {
 export function isDate(obj: any) {
   return Object.prototype.toString.call(obj) === "[object Date]";
 }
+
+export function shortenDateTime(timestamp: Date) {
+  return timestamp.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}

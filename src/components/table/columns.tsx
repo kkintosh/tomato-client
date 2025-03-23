@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { FileRecord } from "@/types/file";
-import { shortenDateTime } from "@/utils/date-time";
+import { shortenDateTime } from "@/utils/common";
 import { formatBytes } from "@/utils/file";
 
 const columns: Array<ColumnDef<FileRecord>> = [

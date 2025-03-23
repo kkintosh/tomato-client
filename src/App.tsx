@@ -1,8 +1,12 @@
 import { useState } from "react";
 
+import { Hex } from "@aptos-labs/ts-sdk";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { registerWallet } from "@aptos-labs/wallet-standard";
 import { WebUploader } from "@irys/web-upload";
+import CryptoJS from "crypto-js";
+import nacl from "tweetnacl";
+import naclUtil from "tweetnacl-util";
 
 import { WebAptos } from "@/lib/aptos-web";
 // Imports for registering a browser extension wallet plugin on page load
@@ -15,6 +19,7 @@ import { Button } from "./components/ui/button";
 import { SidebarInset, SidebarTrigger } from "./components/ui/sidebar";
 import { Toaster } from "./components/ui/toaster";
 import { WalletSelector } from "./components/wallet-selector";
+import { getAllTransactionByAddress } from "./lib/irys/query";
 
 // Example of how to register a browser extension wallet plugin.
 // Browser extension wallets should call registerWallet once on page load.
@@ -26,12 +31,11 @@ import { WalletSelector } from "./components/wallet-selector";
 })();
 
 export default function App() {
-  const { account, connected, disconnect, wallet } = useWallet();
+  const { account, connected, disconnect, wallet, signMessage } = useWallet();
   const [irysStatus, setIrysStatus] = useState("Not connected");
 
   const getIrysUploader = async () => {
     console.log("connect irys called");
-    console.log(wallet);
 
     const irysUploader = await WebUploader(WebAptos).withProvider(wallet);
     console.log(irysUploader);
@@ -48,12 +52,49 @@ export default function App() {
 
     console.log(Buffer.from(await file.arrayBuffer()));
 
-    try {
-      const response = await irys.uploadFile(file);
-      console.log(`File uploaded ==> https://gateway.irys.xyz/${response.id}`);
-    } catch (e) {
-      console.log("Error uploading file ", e);
+    // try {
+    //   const response = await irys.uploadFile(file);
+    //   console.log(`File uploaded ==> https://gateway.irys.xyz/${response.id}`);
+    // } catch (e) {
+    //   console.log("Error uploading file ", e);
+    // }
+  };
+
+  const testQuery = async () => {
+    const address = wallet?.accounts[0]?.address;
+    if (address) {
+      getAllTransactionByAddress(wallet?.accounts[0]?.address);
     }
+  };
+
+  const testEncryption = async () => {
+    // const publicKey = wallet?.accounts[0]?.publicKey;
+
+    const publicKey = account?.publicKey.toUint8Array();
+    const sharedKey = nacl.hash(publicKey).slice(0, 32); // Derive a symmetric key
+
+    // encrypt
+
+    const aesKey = CryptoJS.lib.WordArray.random(32).toString(CryptoJS.enc.Hex);
+    const encryptedMessage = CryptoJS.AES.encrypt("my message lmao", aesKey).toString();
+
+    // const publicKeyBytes = Hex..ensure(publicKeyHex).toUint8Array();
+
+    const encryptedAESKey = CryptoJS.AES.encrypt(aesKey, naclUtil.encodeBase64(sharedKey)).toString();
+    const encryptData = { encryptedMessage, encryptedAESKey };
+
+    console.log("encryptData:", encryptData);
+
+    // Decrypt the data (AES key) using the private key from the wallet (done by wallet in practice)
+    // const decryptedAESKey = await signMessage({ message: "lmao", nonce: "69" });
+    // console.log("Decrypted Key:", decryptedAESKey);
+
+    const decryptedAESKey = CryptoJS.AES.decrypt(encryptedAESKey, naclUtil.encodeBase64(sharedKey)).toString(
+      CryptoJS.enc.Utf8
+    );
+    const decryptData = CryptoJS.AES.decrypt(encryptData.encryptedMessage, decryptedAESKey).toString(CryptoJS.enc.Utf8);
+
+    console.log("decryptData:", decryptData);
   };
 
   return (
@@ -65,6 +106,8 @@ export default function App() {
             <SidebarTrigger className="-ml-1" />
             <SearchForm />
             <Button onClick={uploadDePINData}>upload</Button>
+            <Button onClick={testQuery}>testQuery</Button>
+            <Button onClick={testEncryption}>testEncryption</Button>
           </div>
           <div className="px-4">
             <WalletSelector />
